@@ -2,7 +2,7 @@ name: kuro-auto-signin
 
 on:
   schedule:
-    - cron: "0 16 * * *"
+    - cron: "49 0/6 * * *"
   workflow_dispatch:
 
 jobs:
