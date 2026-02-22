@@ -1,0 +1,59 @@
+name: kuro-auto-signin
+
+on:
+  schedule:
+    - cron: "49 0/6 * * *"
+  workflow_dispatch:
+
+jobs:
+  signin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install .
+
+      - name: Build config from secrets
+        env:
+          KURO_TOKEN: ${{ secrets.KURO_TOKEN }}
+          KURO_CONFIG_NAME: ${{ secrets.KURO_CONFIG_NAME }}
+          KURO_ENABLE: ${{ secrets.KURO_ENABLE }}
+          KURO_COMPLETED: ${{ secrets.KURO_COMPLETED }}
+          KURO_AUTO_REPLE_SIGN: ${{ secrets.KURO_AUTO_REPLE_SIGN }}
+          KURO_RETRY_TIMES: ${{ secrets.KURO_RETRY_TIMES }}
+          KURO_DISTINCT_ID: ${{ secrets.KURO_DISTINCT_ID }}
+          KURO_DEVCODE: ${{ secrets.KURO_DEVCODE }}
+          KURO_WWROLE_ID: ${{ secrets.KURO_WWROLE_ID }}
+          KURO_EEEROLE_ID: ${{ secrets.KURO_EEEROLE_ID }}
+          KURO_USER_ID: ${{ secrets.KURO_USER_ID }}
+        run: |
+          if [ -z "${KURO_TOKEN}" ]; then
+            echo "Missing secret: KURO_TOKEN"
+            exit 1
+          fi
+          CONFIG_NAME="${KURO_CONFIG_NAME:-name}"
+          mkdir -p config
+          cat > "config/${CONFIG_NAME}.yaml" <<EOF
+          enable: ${KURO_ENABLE:-true}
+          token: "${KURO_TOKEN}"
+          completed: ${KURO_COMPLETED:-false}
+          auto_reple_sign: ${KURO_AUTO_REPLE_SIGN:-true}
+          retry_times: ${KURO_RETRY_TIMES:-3}
+          game_info:
+            distinct_id: "${KURO_DISTINCT_ID}"
+            devcode: "${KURO_DEVCODE}"
+            wwroleId: ${KURO_WWROLE_ID:-}
+            eeeroleId: ${KURO_EEEROLE_ID:-}
+          user_info:
+            userId: "${KURO_USER_ID}"
+          EOF
+
+      - name: Run sign in
+        run: python main.py
