@@ -22,7 +22,7 @@
    # 控制本 config 文件是否启用
    enable: true
    # token 必填
-   token: ""
+   token: "${{ secrets.KURO_TOKEN }}"
    # 是否完整，不完整默认系统自动补全
    completed: false
    # 是否自动补签
@@ -34,17 +34,17 @@
    # 游戏信息
    game_info:
      # distinct_id 和 devCode 可选，系统会随机生成
-     distinct_id: ""
-     devcode: ""
+     distinct_id: "${{ secrets.KURO_DISTINCT_ID }}"
+     devcode: "${{ secrets.KURO_DEVCODE }}"
      # wwroleId：鸣潮 ID（可选，默认系统获取）
-     wwroleId: 
+     wwroleId: "${{ secrets.KURO_WWROLE_ID }}"
      # eeeroleId：战双 ID（可选，默认系统获取）
-     eeeroleId: 
+     eeeroleId: "${{ secrets.KURO_EEEROLE_ID }}"
 
    # 用户信息
    user_info:
      # 库街区 bbs ID（可选，默认系统获取）
-     userId: ""
+     userId: "${{ secrets.KURO_USER_ID }}"
    ```
 
 2. **签到流程**  
@@ -62,6 +62,23 @@
 
 5. **serverid设置**：战双serverid如果不对请自行抓包更正。
 
+
+---
+
+## GitHub Actions 运行
+
+1. **Fork 本仓库**
+
+2. **配置 Secrets**
+   进入仓库 `Settings` → `Secrets and variables` → `Actions` → `New repository secret`，添加以下 Secrets：
+
+   - 必填：`KURO_TOKEN`
+   - 可选：`KURO_CONFIG_NAME`（默认 `name`）
+   - 可选：`KURO_ENABLE`、`KURO_COMPLETED`、`KURO_AUTO_REPLE_SIGN`、`KURO_RETRY_TIMES`
+   - 可选：`KURO_DISTINCT_ID`、`KURO_DEVCODE`、`KURO_WWROLE_ID`、`KURO_EEEROLE_ID`、`KURO_USER_ID`
+
+3. **启用 Actions**
+   在 `Actions` 里启用工作流 `kuro-auto-signin`，可手动运行或等待定时触发。
 
 ---
 
